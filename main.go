@@ -98,7 +98,7 @@ func SetVCLtemperature(state string, quit int) string {
 	case "auto":
 		return "auto"
 	case "cold":
-		return"cold"
+		return "cold"
 	case "warm":
 		return "warm"
 	default:
@@ -115,7 +115,7 @@ func SetBackendState(state string, quit int) string {
 	case "auto":
 		return "auto"
 	case "healthy":
-		return"healthy"
+		return "healthy"
 	case "sick":
 		return "sick"
 	default:
@@ -270,7 +270,7 @@ func main() {
 	fmt.Printf("%v (%v)\n", resp.Status, DescribeReturnCode(resp.Status))
 	if !resp.IsSuccess() {
 		os.Exit(1)
-	}	else {
+	} else {
 		println(resp.Body)
 	}
 }
