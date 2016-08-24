@@ -14,6 +14,9 @@ type subArg []string
 var (
 	prepared_command []string
 	extra_flag       string
+	ban_arg          string
+	conn             *gva.Connection
+	conn_err         error
 
 	app = kingpin.New("varnishadm-ninja", "Varnish CLI client")
 
@@ -233,7 +236,12 @@ func init() {
 			SetBackendState(*command_backend_set_health_state, 1))
 
 	case command_ban.FullCommand():
-		if len(*command_ban_args) < 3 {
+		if len(*command_ban_args) == 1 {
+			 if len(strings.Split(strings.Join(*command_ban_args, " "), " ")) < 3 {
+				println("Too few arguments for ban command")
+				os.Exit(1)
+			 }
+		} else if len(*command_ban_args) < 3 {
 			println("Too few arguments for ban command")
 			os.Exit(1)
 		}
@@ -255,9 +263,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	conn, err := gva.NewConnection(varnish_terminal_interface.IP.String(), uint16(varnish_terminal_interface.Port), &varnish_secret)
-	if err != nil {
-		println("Connection failed:", err.Error())
+	if *varnish_terminal_secret != "" {
+		conn, conn_err = gva.NewConnection(varnish_terminal_interface.IP.String(), uint16(varnish_terminal_interface.Port), &varnish_secret)
+	} else {
+		conn, conn_err = gva.NewConnection(varnish_terminal_interface.IP.String(), uint16(varnish_terminal_interface.Port), nil)
+	}
+	if conn_err != nil {
+		println("Connection failed:", conn_err.Error())
 		os.Exit(1)
 	}
 
